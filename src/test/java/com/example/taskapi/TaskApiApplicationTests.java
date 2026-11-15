@@ -2,6 +2,7 @@
 package com.example.taskapi;
 
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -18,29 +19,31 @@ class TaskApiApplicationTests {
     private MockMvc mockMvc;
 
     @Test
-    void healthEndpointReturnsUp() throws Exception {
+    void healthEndpointShouldReturnUp() throws Exception {
+
         mockMvc.perform(get("/health"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("UP"));
+                .andExpect(jsonPath("$.status").value("UP"))
+                .andExpect(jsonPath("$.application")
+                        .value("Task Management API"));
     }
 
     @Test
-    void createAndRetrieveTask() throws Exception {
+    void shouldCreateAndRetrieveTask() throws Exception {
 
-        // Create a new task
         mockMvc.perform(post("/tasks")
                 .contentType("application/json")
-                .content("{\"title\":\"Automated Test Task\"}"))
+                .content("{\"title\":\"Integration Test Task\"}"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.title")
-                        .value("Automated Test Task"));
+                        .value("Integration Test Task"))
+                .andExpect(jsonPath("$.completed").value(false));
 
-        // Retrieve tasks
         mockMvc.perform(get("/tasks"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(
-                        org.hamcrest.Matchers.containsString(
-                                "Automated Test Task")));
+                .andExpect(jsonPath("$[0].title")
+                        .value("Integration Test Task"));
     }
 }
 
