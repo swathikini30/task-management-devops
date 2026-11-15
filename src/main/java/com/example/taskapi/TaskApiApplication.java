@@ -39,8 +39,11 @@ public class TaskApiApplication {
     }
 
     @GetMapping("/health")
-    public Map<String, String> health() {
-        return Map.of("status", "UP");
-    }
+public Map<String, String> health() {
+    return Map.of(
+        "status", "UP",
+        "application", "Task Management API"
+    );
+}
 }
 
