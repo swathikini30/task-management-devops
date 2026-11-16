@@ -1,0 +1,32 @@
+---
+- name: Install Java 17
+  apt:
+    name: openjdk-17-jre-headless
+    state: present
+    update_cache: yes
+
+- name: Create application directory
+  file:
+    path: /opt/task-api
+    state: directory
+    mode: '0755'
+
+- name: Copy application JAR
+  copy:
+    src: "{{ playbook_dir }}/app/task-api-0.0.1-SNAPSHOT.jar"
+    dest: /opt/task-api/task-api.jar
+    mode: '0644'
+  notify: Restart Task API
+
+- name: Configure Task API systemd service
+  template:
+    src: task-api.service.j2
+    dest: /etc/systemd/system/task-api.service
+  notify: Restart Task API
+
+- name: Enable and start Task API
+  systemd:
+    name: task-api
+    state: started
+    enabled: yes
+    daemon_reload: yes

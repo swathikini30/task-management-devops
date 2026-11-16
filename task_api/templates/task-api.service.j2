@@ -1,0 +1,11 @@
+[Unit]
+Description=Task Management API
+After=network.target
+
+[Service]
+User=root
+ExecStart=/usr/bin/java -jar /opt/task-api/{{ app_jar }} --server.port={{ app_port }}
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

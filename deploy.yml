@@ -1,0 +1,18 @@
+---
+- name: Deploy Task Management API
+  hosts: webservers
+  become: yes
+
+  roles:
+    - task_api
+
+  tasks:
+    - name: Wait for application health check
+      uri:
+        url: "http://localhost:8080/health"
+        method: GET
+        status_code: 200
+      register: health_check
+      retries: 10
+      delay: 5
+      until: health_check.status == 200
